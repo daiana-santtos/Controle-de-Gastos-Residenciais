@@ -19,3 +19,20 @@ export async function criarPessoa(dados: CriarPessoaRequest): Promise<PessoaResp
     const pessoaCriada = await resposta.json();
     return pessoaCriada;
 }
+
+export async function deletarPessoa(id: number): Promise<void> {
+    const resposta = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+    });
+    if (!resposta.ok) throw new Error("Erro ao deletar pessoa.");
+}
+
+export async function listarTotais(): Promise<any> {
+    const resposta = await fetch(`${API_URL}/totais`);
+    
+    if (!resposta.ok){
+        throw new Error("Erro ao buscar os totais.")
+    }
+
+    return await resposta.json();
+}
