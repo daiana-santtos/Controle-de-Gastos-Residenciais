@@ -1,9 +1,14 @@
 import { useState } from "react";
+import { criarPessoa } from "../../services/pessoaService";
 import type { SubmitEvent } from "react";
 import type { CriarPessoaRequest } from "../../types/pessoa";
-import { criarPessoa } from "../../services/pessoaService";
 
-function PessoaForm({ aoSalvar }: { aoSalvar: () => void }) {
+interface PessoaFormProps {
+    aoSalvar: () => Promise<void>;
+    atualizarTotais: () => Promise<void>
+}
+
+function PessoaForm({ aoSalvar, atualizarTotais }: PessoaFormProps) {
     const [nome, setNome] = useState<string>("");
     const [idade, setIdade] = useState<number>(0);
     const [erro, setErro] = useState<string>("");
@@ -25,10 +30,8 @@ function PessoaForm({ aoSalvar }: { aoSalvar: () => void }) {
             await criarPessoa(dados);
             setErro("");
             setSucesso("Pessoa criada com sucesso!");
-            aoSalvar();
-            // Limpa o formulário
-            setNome("");
-            setIdade(0);
+            await aoSalvar();
+            await atualizarTotais();
         }
         catch (error) {
             if (error instanceof Error) {

@@ -1,26 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { criarTransacao } from '../../services/transacaoService';
 import type { SubmitEvent } from 'react';
 import type { PessoaResponse } from '../../types/pessoa';
-import type { CriarTransacaoRequest } from '../../types/transacao';   
-import { listarPessoas } from '../../services/pessoaService';
-import { criarTransacao } from '../../services/transacaoService';
+import type { CriarTransacaoRequest } from '../../types/transacao';
 
-function TransacaoForm( { aoSalvar }: { aoSalvar: () => void }) {
-    const [pessoas, setPessoas] = useState<PessoaResponse[]>([]);
+
+interface TransacaoFormProps {
+    pessoas: PessoaResponse[],
+    aoSalvar: () => Promise<void>;
+    atualizarTotais: () => Promise<void>;
+}
+
+function TransacaoForm( { pessoas, aoSalvar, atualizarTotais }: TransacaoFormProps) {
     const [pessoaId, setPessoaId] = useState<number>(0);
     const [valor, setValor] = useState<number>(0);
     const [tipo, setTipo] = useState<number>(1); // 1 = Despesa, 2 = Receita
     const [descricao, setDescricao] = useState<string>("");
     const [erro, setErro] = useState<string>("");
     const [sucesso, setSucesso] = useState<string>("");
-
-    useEffect(() => {
-        async function carregarPessoas(){
-            const dados = await listarPessoas();
-            setPessoas(dados);
-        }
-        carregarPessoas();
-    },[]);
 
     async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault(); 
@@ -40,8 +37,9 @@ function TransacaoForm( { aoSalvar }: { aoSalvar: () => void }) {
             await criarTransacao(dados);
             setErro("");
             setSucesso("Transação criada com sucesso!");
-            aoSalvar();
-            // Limpa o formulário
+            await aoSalvar();
+            await atualizarTotais();
+            //Limpa o formulário
             setDescricao("");
             setValor(0);
             setTipo(1);

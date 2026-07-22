@@ -5,14 +5,16 @@ interface PessoaListProps {
     pessoas: PessoaResponse[];
     aoExcluir: () => Promise<void>;
     atualizarTransacoes: () => Promise<void>;
+    atualizarTotais: () => Promise<void>;
 }
 
-function PessoaList({ pessoas, aoExcluir, atualizarTransacoes }: PessoaListProps) {
+function PessoaList({ pessoas, aoExcluir, atualizarTransacoes, atualizarTotais }: PessoaListProps) {
     async function excluir(id:number) {
         try {
             await deletarPessoa(id);
             await aoExcluir();
             await atualizarTransacoes();
+            await atualizarTotais();
         }
         catch (error) {
             if (error instanceof Error) {

@@ -1,4 +1,4 @@
-import type { PessoaResponse, CriarPessoaRequest } from "../types/pessoa.ts";
+import type { PessoaResponse, CriarPessoaRequest, TotaisResponse } from "../types/pessoa.ts";
 
 const API_URL = "http://localhost:5141/api/Pessoas"; 
 
@@ -27,7 +27,7 @@ export async function deletarPessoa(id: number): Promise<void> {
     if (!resposta.ok) throw new Error("Erro ao deletar pessoa.");
 }
 
-export async function listarTotais(): Promise<any> {
+export async function listarTotais(): Promise<TotaisResponse> {
     const resposta = await fetch(`${API_URL}/totais`);
     
     if (!resposta.ok){
