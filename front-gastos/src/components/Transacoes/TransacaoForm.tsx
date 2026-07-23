@@ -4,13 +4,23 @@ import type { SubmitEvent } from 'react';
 import type { PessoaResponse } from '../../types/pessoa';
 import type { CriarTransacaoRequest } from '../../types/transacao';
 
-
+/**
+ * Propriedades recebidas pelo componente TransacaoForm.
+ */
 interface TransacaoFormProps {
+    /** Lista de pessoas utilizada para preencher o campo de seleção. */
     pessoas: PessoaResponse[],
+    /** Callback responsável por atualizar a listagem de transações. */
     aoSalvar: () => Promise<void>;
+    /** Callback responsável por atualizar o resumo financeiro. */
     atualizarTotais: () => Promise<void>;
 }
 
+/**
+ * Componente responsável pelo cadastro de novas transações.
+ * Realiza a validação dos dados informados, envia a requisição para a API
+ * e, em caso de sucesso, atualiza a listagem de transações e o resumo financeiro.
+ */
 function TransacaoForm( { pessoas, aoSalvar, atualizarTotais }: TransacaoFormProps) {
     const [pessoaId, setPessoaId] = useState<number>(0);
     const [valor, setValor] = useState<number>(0);
@@ -19,6 +29,13 @@ function TransacaoForm( { pessoas, aoSalvar, atualizarTotais }: TransacaoFormPro
     const [erro, setErro] = useState<string>("");
     const [sucesso, setSucesso] = useState<string>("");
 
+    /**
+     * Manipula o envio do formulário de cadastro.
+     * Valida os dados informados, cria uma nova transação por meio da API
+     * e atualiza os dados exibidos na interface.
+     *
+     * @param e - Evento de submissão do formulário.
+     */
     async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault(); 
         if (pessoaId === 0 || valor <= 0) {
@@ -44,6 +61,10 @@ function TransacaoForm( { pessoas, aoSalvar, atualizarTotais }: TransacaoFormPro
             setValor(0);
             setTipo(1);
             setPessoaId(0);
+
+            setTimeout(() => {
+                setSucesso("");
+            }, 3000);
         }
         catch (error) {
             if (error instanceof Error) {
@@ -52,37 +73,42 @@ function TransacaoForm( { pessoas, aoSalvar, atualizarTotais }: TransacaoFormPro
             else {
                 setErro("Ocorreu um erro inesperado.");
             }
+
+            setTimeout(() => {
+                setErro("");
+            }, 3000);
         }
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form">
             <h2>Nova Transação</h2>
 
             {erro && (<p className="erro">{erro}</p>)}
-            {sucesso && (<p style={{ color: 'green', fontWeight: 'bold' }}>{sucesso}</p>)}
+            {sucesso && (<p className="sucesso">{sucesso}</p>)}
 
-            <div>
+            <div className="form-group">
                 <label>Pessoa</label>
 
+                {/* Lista todas as pessoas cadastradas para seleção da transação. */}
                 <select value={pessoaId} onChange={(e) => setPessoaId(Number(e.target.value))}>
                     <option value={0}>Selecione uma pessoa</option>
                     {pessoas.map((pessoa) => (<option key={pessoa.id} value={pessoa.id}> {pessoa.nome} </option>))}
                 </select>
             </div>
             
-            <div>
+            <div className="form-group">
                 <label>Descrição</label>
 
                 <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
             </div>
 
-            <div>
+            <div className="form-group">
                 <label>Valor</label>
                 <input type="number" value={valor} onChange={(e) => setValor(Number(e.target.value))} />
             </div>
 
-            <div>
+            <div className="form-group">
                 <label>Tipo</label>
                 <select value={tipo} onChange={(e) => setTipo(Number(e.target.value))}>
                     <option value={1}>Despesa</option>
@@ -90,7 +116,7 @@ function TransacaoForm( { pessoas, aoSalvar, atualizarTotais }: TransacaoFormPro
                 </select>
             </div>
 
-            <button type="submit">Criar Transação</button>
+            <button type="submit" className="btn-form">Criar Transação</button>
         </form>
     );
 }

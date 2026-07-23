@@ -1,9 +1,19 @@
+import { formatarMoeda } from "../../utils/formatadores";
 import type { TotaisResponse } from "../../types/pessoa";
 
+/**
+ * Propriedades recebidas pelo componente Totais.
+ */
 interface TotaisProps {
+    /** Dados consolidados do resumo financeiro da aplicação. */
     totais: TotaisResponse | null;
 }
 
+/**
+ * Componente responsável por exibir o resumo financeiro da aplicação.
+ * Apresenta os totais de receitas, despesas e saldo de cada pessoa,
+ * além dos totais gerais do sistema.
+ */
 function Totais({totais}: TotaisProps) {
     if (!totais) {
         return <p>Carregando totais...</p>
@@ -24,22 +34,24 @@ function Totais({totais}: TotaisProps) {
                 </thead>
 
                 <tbody>
+                    {/* Renderiza uma linha para cada pessoa cadastrada. */}
                     {totais.pessoas.map((pessoa) => (
                         <tr key={pessoa.id}>
                             <td>{pessoa.nome}</td>
-                            <td>R$ {pessoa.totalReceitas.toFixed(2)}</td>
-                            <td>R$ {pessoa.totalDespesas.toFixed(2)}</td>
-                            <td>R$ {pessoa.saldo.toFixed(2)}</td>
+                            <td>{formatarMoeda(pessoa.totalReceitas)}</td>
+                            <td>{formatarMoeda(pessoa.totalDespesas)}</td>
+                            <td>{formatarMoeda(pessoa.saldo)}</td>
                         </tr>
                     ))}
                 </tbody>
 
+                {/* Exibe o consolidado geral da aplicação. */}
                 <tfoot>
                     <tr>
                         <th>Total Geral</th>
-                        <th>R$ {totais.totalGeralReceitas.toFixed(2)}</th>
-                        <th>R$ {totais.totalGeralDespesas.toFixed(2)}</th>
-                        <th>R$ {totais.saldoLiquidoGeral.toFixed(2)}</th>
+                        <th>{formatarMoeda(totais.totalGeralReceitas)}</th>
+                        <th>{formatarMoeda(totais.totalGeralDespesas)}</th>
+                        <th>{formatarMoeda(totais.saldoLiquidoGeral)}</th>
                     </tr>
                 </tfoot>
             </table>
