@@ -5,6 +5,10 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =========================
+// Configuração dos serviços
+// =========================
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
@@ -27,6 +31,10 @@ builder.Services.AddCors(options =>
         });
 });
 
+// =========================
+// Construção da aplicação
+// =========================
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -40,6 +48,10 @@ if (app.Environment.IsDevelopment())
                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
 }
+
+// =========================
+// Middleware e pipeline HTTP
+// =========================
 
 app.UseHttpsRedirection();
 app.UseCors("React");

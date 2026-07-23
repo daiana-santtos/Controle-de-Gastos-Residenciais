@@ -5,10 +5,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControleGastos.Api.Services
 {
+    /// <summary>
+    /// Serviço responsável pelas regras de negócio relacionadas às transações.
+    /// Realiza operações de cadastro e consulta das transações financeiras.
+    /// </summary>
     public class TransacaoService(AppDbContext context)
     {
         private readonly AppDbContext _context = context;
 
+        /// <summary>
+        /// Cria uma nova transação após validar as regras de negócio.
+        /// </summary>
+        /// <param name="dto">Dados necessários para criação da transação.</param>
+        /// <returns>Objeto contendo os dados da transação criada.</returns>
+        /// <exception cref="ArgumentException">
+        /// Lançada quando a pessoa informada não é encontrada.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Lançada quando uma pessoa menor de idade tenta cadastrar uma receita.
+        /// </exception>
         public async Task<TransacaoResponseDto> CriarTransacaoAsync(CriarTransacaoRequestDto dto)
         {
             //verifica se a pessoa existe
@@ -42,6 +57,11 @@ namespace ControleGastos.Api.Services
             };
         }
 
+        /// <summary>
+        /// Retorna todas as transações cadastradas juntamente com o nome da pessoa
+        /// responsável por cada uma delas.
+        /// </summary>
+        /// <returns>Lista de transações cadastradas.</returns>
         public async Task<List<TransacaoResponseDto>> ListarTransacoesAsync()
         {
             var transacoes = await _context.Transacoes

@@ -5,9 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ControleGastos.Api.Services
 {
+    /// <summary>
+    /// Serviço responsável pelas regras de negócio relacionadas às pessoas.
+    /// Realiza operações de cadastro, consulta, exclusão e cálculo dos totais financeiros.
+    /// </summary>
     public class PessoaService(AppDbContext context)
     {
         private readonly AppDbContext _context = context;
+
+        /// <summary>
+        /// Cria uma nova pessoa e a persiste no banco de dados.
+        /// </summary>
+        /// <param name="dto">Dados necessários para criação da pessoa.</param>
+        /// <returns>Objeto contendo os dados da pessoa criada.</returns>
         public async Task<PessoaResponseDto> CriarPessoaAsync(CriarPessoaRequestDto dto)
         {
             Pessoa pessoa = new()
@@ -27,6 +37,10 @@ namespace ControleGastos.Api.Services
             };
         }
 
+        /// <summary>
+        /// Retorna todas as pessoas cadastradas no banco de dados.
+        /// </summary>
+        /// <returns>Lista de pessoas cadastradas.</returns>
         public async Task<List<PessoaResponseDto>> ListarPessoasAsync()
         {
             var pessoas = await _context.Pessoas
@@ -41,6 +55,14 @@ namespace ControleGastos.Api.Services
             })];
         }
 
+        /// <summary>
+        /// Exclui uma pessoa cadastrada pelo seu identificador.
+        /// </summary>
+        /// <param name="id">Identificador da pessoa.</param>
+        /// <returns>
+        /// True caso a exclusão seja realizada com sucesso;
+        /// False caso a pessoa não seja encontrada.
+        /// </returns>
         public async Task<bool> DeletarPessoaAsync(int id)
         {
             var pessoa = await _context.Pessoas.FindAsync(id);
@@ -55,6 +77,11 @@ namespace ControleGastos.Api.Services
 
             return true;
         }
+
+        /// <summary>
+        /// Calcula os totais financeiros por pessoa e o consolidado geral da aplicação.
+        /// </summary>
+        /// <returns>Resumo financeiro contendo receitas, despesas e saldos.</returns>
         public async Task<TotaisResponseDto> ConsultarTotaisAsync()
         {
             var pessoasTotais = await _context.Pessoas
